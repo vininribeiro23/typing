@@ -17,9 +17,14 @@ const isValidKey = (key, word) => {
 }
 
 const Word =({word, validKeys}) => {
+  if(!word) return null;
+
+  const joinedKeys = validKeys.join('');
+  const matched = word.slice(0, joinedKeys.length);
+  const remainder = word.slice(joinedKeys.length);
   return (<>
-          <span className="matched"></span>
-          <span className="remainder">{word}</span>
+          <span className="matched">{matched}</span>
+          <span className="remainder">{remainder}</span>
           </> )
 
 };
@@ -28,10 +33,27 @@ const App =() =>  {
   const [word, setWord]=useState('')
   const [typedKeys, setTypedKeys] = useState([]);
   const [validKeys, setValidKeys] = useState([]);
+  const [completedWords, setCompletedWords] = useState([]);
 
   useEffect(() => {
     setWord(getWord());
   }, []);
+
+  useEffect(() => {
+    const wordFromValidKeys = validKeys.join('').toLowerCase();
+    if(word && word == wordFromValidKeys){
+
+      let newWord = null;
+      do{
+        newWord = getWord();
+      }while(completedWords.includes(newWord))
+
+      setWord(newWord); 
+      setValidKeys([]);
+      setCompletedWords((prev) => [...prev, word]);
+
+    }
+  }, [word, validKeys, completedWords])
 
   
   const handleKeyDown = (e) =>{
@@ -48,8 +70,7 @@ const App =() =>  {
       })
     }
 
-    console.log('key', key)
-  }
+  };
     return  ( <div className="container" tabIndex="0" onKeyDown={handleKeyDown}>
     <div className="valid-keys">
         <Word word={word} validKeys={validKeys} />
@@ -58,9 +79,9 @@ const App =() =>  {
     <div className="typed-keys">{typedKeys? typedKeys.join(' '): null}</div>
     <div className="completed-words">
       <ol>
-        <li>cidade</li>
-        <li>carro</li>
-        <li>moto</li>          
+        {completedWords.map((word) => (
+        <li key ={word}>{word}</li>
+        ))}        
       </ol>
     </div>
   </div>
