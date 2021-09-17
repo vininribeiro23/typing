@@ -41,7 +41,7 @@ const App =() =>  {
 
   useEffect(() => {
     const wordFromValidKeys = validKeys.join('').toLowerCase();
-    if(word && word == wordFromValidKeys){
+    if(word && word === wordFromValidKeys){
 
       let newWord = null;
       do{
@@ -64,7 +64,7 @@ const App =() =>  {
     if(isValidKey(key, word)) {
       setValidKeys((prev)=> {
         const isValidLength = prev.length <= word.length;
-        const isNextChar = isValidLength && word[prev.length] == key;
+        const isNextChar = isValidLength && word[prev.length] === key;
 
        return (isNextChar)? [...prev, key ] : prev;
       })
